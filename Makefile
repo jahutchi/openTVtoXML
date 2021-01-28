@@ -36,9 +36,9 @@ clean:
 	rm -f $(OBJS) $(DOWNLOADER_OBJS) $(DOWNLOADER_BIN)
 
 install-standalone:
-	install -d $(D)/usr/radiotimes_emulator/providers
-	install -m 755 bin/radiotimes_emulator $(D)/usr/radiotimes_emulator/
-	install -m 644 providers/* $(D)/usr/radiotimes_emulator/providers/
+	install -d $(D)/opt/radiotimes_emulator/providers
+	install -m 755 bin/radiotimes_emulator $(D)/opt/radiotimes_emulator/
+	install -m 644 providers/* $(D)/opt/radiotimes_emulator/providers/
 
 install-standalone-var:
 	install -d $(D)/var/radiotimes_emulator/providers
