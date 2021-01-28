@@ -16,23 +16,6 @@
 #define dmx_sct_filter_params dmxSctFilterParams
 #else
 #include <linux/dvb/dmx.h>
-/*
-	get rid of DMX_SET_SOURCE patch dmx.h v4.17
-	id=13adefbe9e566c6db91579e4ce17f1e5193d6f2c
-*/
-#ifndef DMX_SET_SOURCE
-typedef enum dmx_source {
-	DMX_SOURCE_FRONT0 = 0,
-	DMX_SOURCE_FRONT1,
-	DMX_SOURCE_FRONT2,
-	DMX_SOURCE_FRONT3,
-	DMX_SOURCE_DVR0   = 16,
-	DMX_SOURCE_DVR1,
-	DMX_SOURCE_DVR2,
-	DMX_SOURCE_DVR3
-} dmx_source_t;
-#define DMX_SET_SOURCE	_IOW('o', 49, dmx_source_t)
-#endif
 #endif
 
 #include "../../common.h"
@@ -47,13 +30,10 @@ void dvb_read (dvb_t *settings, bool(*data_callback)(int, unsigned char*))
 	{
 		int cycles, total_size, fd;
 		struct dmx_sct_filter_params params;
-		dmx_source_t ssource;
 	
 		char first[settings->buffer_size];
 		int first_length;
 		bool first_ok;
-	
-		ssource = DMX_SOURCE_FRONT0 + settings->frontend;
 	
 		memset(&params, 0, sizeof(params));
 		params.pid = settings->pid;
@@ -64,12 +44,6 @@ void dvb_read (dvb_t *settings, bool(*data_callback)(int, unsigned char*))
 
 		if ((fd = open(settings->demuxer, O_RDONLY|O_CLOEXEC|O_NONBLOCK)) < 0) {
 			log_add ("Cannot open demuxer '%s'", settings->demuxer);
-			return;
-		}
-
-		if (ioctl(fd, DMX_SET_SOURCE, &ssource) == -1) {
-			log_add ("ioctl DMX_SET_SOURCE failed");
-			close(fd);
 			return;
 		}
 
@@ -133,13 +107,10 @@ void dvb_read (dvb_t *settings, bool(*data_callback)(int, unsigned char*))
 		struct pollfd PFD[settings->pids_count];
 		int cycles, i, total_size;
 		struct dmx_sct_filter_params params;
-		dmx_source_t ssource;
 
 		char first[settings->pids_count][settings->buffer_size];
 		int first_length[settings->pids_count];
 		bool first_ok[settings->pids_count];
-
-		ssource = DMX_SOURCE_FRONT0 + settings->frontend;
 
 		int dmx_next = 0;
 		char dmx_adpt[256];
@@ -181,10 +152,6 @@ void dvb_read (dvb_t *settings, bool(*data_callback)(int, unsigned char*))
 			params.flags = DMX_CHECK_CRC|DMX_IMMEDIATE_START;
 			params.filter.filter[0] = settings->filter;
 			params.filter.mask[0] = settings->mask;
-
-			if (ioctl(PFD[i].fd, DMX_SET_SOURCE, &ssource) < 0) {
-				log_add ("ioctl DMX_SET_SOURCE failed");
-			}
 
 			if (ioctl (PFD[i].fd, DMX_SET_BUFFER_SIZE, settings->buffer_size * 4) < 0)
 				log_add ("ioctl DMX_SET_BUFFER_SIZE failed");
