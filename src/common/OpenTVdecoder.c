@@ -147,7 +147,7 @@ void download_opentv ()
 	char dictionary[MAX_FILENAME_SIZE];
 	char themes[MAX_FILENAME_SIZE];
 
-	log_add ("Started RadioTimes XMLTV (e2xmltv) emulation");
+	log_add ("Started OpenTV decoder");
 	log_add ("Started OpenTV events download, DVB poll %s\n", no_dvb_poll ? "disabled" : "enabled");
 
 	sprintf (dictionary, "%s/providers/%s.dict", homedir, provider);
@@ -198,8 +198,8 @@ void download_opentv ()
 		sprintf(name_file, "%s/%s.xml", db_root, provider);
 		outfile = fopen(name_file,"w");
 		fprintf(outfile,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
-		fprintf(outfile,"<tv generator-info-name=\"RadiotimesXmltv Emulator -(beta)- BRANCH{e2xmltv}\"");
-		fprintf(outfile," generator-info-url=\"https://github.com/LraiZer/RadiotimesXmltvEmulator{BRANCH}\">\n");
+		fprintf(outfile,"<tv generator-info-name=\"OpenTVdecoder\"");
+		fprintf(outfile," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\">\n");
 		fflush(outfile);
 		fclose(outfile);
 
@@ -207,8 +207,8 @@ void download_opentv ()
 		sprintf(name_file, "%s/otv_%s.sources.xml", db_root, provider);
 		outfile = fopen(name_file,"w");
 		fprintf(outfile,"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<sources>\n");
-		fprintf(outfile," <!-- \n xmltv generator\"RadiotimesXmltv Emulator (beta) BRANCH{e2xmltv}\"\n");
-		fprintf(outfile," generator-info-url=\"https://github.com/LraiZer/RadiotimesXmltvEmulator{BRANCH}\"\n --> \n");
+		fprintf(outfile," <!-- \n xmltv generator\"OpenTVdecoder\"\n");
+		fprintf(outfile," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\"\n --> \n");
 		fprintf(outfile,"\t<mappings>\n\t\t<channel name=\"%s.channels.xml\">\n\t\t\t<url>%s/%s.channels.xml</url>\n", provider, db_root, provider);
 		fprintf(outfile,"\t\t</channel>\n\t</mappings>\n\t<sourcecat sourcecatname=\"RadioTimes Emulator %s XMLTV\">\n", provider);
 		fprintf(outfile,"\t\t<source type=\"gen_xmltv\" channels=\"%s.channels.xml\">\n\t\t\t<description>OpenTV (%s.xml)</description>\n", provider, provider);
@@ -323,7 +323,7 @@ opentv_stop:
 	}
 
 	exec = false;
-	log_add ("Ended RadioTimes XMLTV emulation");
+	log_add ("Ended OpenTV decoder");
 }
 
 void *download (void *args)
@@ -434,7 +434,7 @@ int main (int argc, char **argv)
 
 	log_new (db_root);
 	log_open (db_root);
-	log_banner ("RadioTimes XMLTV Emulator");
+	log_banner ("OpenTVdecoder");
 
 	char opentv_file[MAX_FILENAME_SIZE];
 	memset(opentv_file, '\0', MAX_FILENAME_SIZE);

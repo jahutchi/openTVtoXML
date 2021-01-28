@@ -9,9 +9,9 @@ OBJS += src/common/epgdb/epgdb.o
 OBJS += src/common/epgdb/epgdb_channels.o
 OBJS += src/common/epgdb/epgdb_titles.o
 
-DOWNLOADER_OBJS += src/common/radiotimes_emulator.o
+DOWNLOADER_OBJS += src/common/OpenTVdecoder.o
 
-DOWNLOADER_BIN = bin/radiotimes_emulator
+DOWNLOADER_BIN = bin/OpenTVdecoder
 
 BIN_DIR = bin
 
@@ -36,14 +36,14 @@ clean:
 	rm -f $(OBJS) $(DOWNLOADER_OBJS) $(DOWNLOADER_BIN)
 
 install-standalone:
-	install -d $(D)/opt/radiotimes_emulator/providers
-	install -m 755 bin/radiotimes_emulator $(D)/opt/radiotimes_emulator/
-	install -m 644 providers/* $(D)/opt/radiotimes_emulator/providers/
+	install -d $(D)/opt/OpenTVdecoder/providers
+	install -m 755 bin/OpenTVdecoder $(D)/opt/OpenTVdecoder/
+	install -m 644 providers/* $(D)/opt/OpenTVdecoder/providers/
 
 install-standalone-var:
-	install -d $(D)/var/radiotimes_emulator/providers
-	install -m 755 bin/radiotimes_emulator $(D)/var/radiotimes_emulator/
-	install -m 644 providers/* $(D)/var/radiotimes_emulator/providers/
+	install -d $(D)/var/OpenTVdecoder/providers
+	install -m 755 bin/OpenTVdecoder $(D)/var/OpenTVdecoder/
+	install -m 644 providers/* $(D)/var/OpenTVdecoder/providers/
 
 install: install-standalone
 install-var: install-standalone-var
