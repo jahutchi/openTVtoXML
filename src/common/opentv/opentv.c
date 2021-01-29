@@ -276,7 +276,7 @@ void opentv_read_titles (unsigned char *data, unsigned int length, bool huffman_
 				if (huffman_debug)
 				{
 					char mtime[20];
-					struct tm *loctime = localtime ((time_t*)&title->start_time);
+					struct tm *loctime = localtime (&title->start_time);
 					printf ("Nid: %x Tsid: %x Sid: %x Type: %x\n", channels[channel_id]->nid, channels[channel_id]->tsid, channels[channel_id]->sid, channels[channel_id]->type);
 					strftime (mtime, 20, "%d/%m/%Y %H:%M", loctime);
 					printf ("Start time: %s\n", mtime);
@@ -349,7 +349,7 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 					if (huffman_debug)
 					{
 						char mtime[20];
-						struct tm *loctime = localtime ((time_t*)&title->start_time);
+						struct tm *loctime = localtime (&title->start_time);
 						printf ("Nid: %x Tsid: %x Sid: %x Type: %x\n", channels[channel_id]->nid, channels[channel_id]->tsid, channels[channel_id]->sid, channels[channel_id]->type);
 						strftime (mtime, 20, "%d/%m/%Y %H:%M", loctime);
 						printf ("Start time: %s\n", mtime);
@@ -362,7 +362,7 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 					char mtime_s[256];
 					memset(mtime_s, '\0', 256);
 					struct tm *loctime_s, *gmtime_s;
-					loctime_s = localtime((time_t*)&title->start_time);
+					loctime_s = localtime(&title->start_time);
 					time_t mytime_s = mktime(loctime_s);
 					gmtime_s = gmtime(&mytime_s);
 					strftime (mtime_s, sizeof(mtime_s), "%Y%m%d%H%M%S %z", gmtime_s);
@@ -370,8 +370,8 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 					char mtime_e[256];
 					struct tm *loctime_e, *gmtime_e;
 					memset(mtime_e, '\0', 256);
-					uint32_t endt = title->start_time + title->length;
-					loctime_e = localtime((time_t*)&endt);
+					time_t endt = title->start_time + title->length;
+					loctime_e = localtime(&endt);
 					time_t mytime_e = mktime(loctime_e);
 					gmtime_e = gmtime(&mytime_e);
 					strftime (mtime_e, sizeof(mtime_e), "%Y%m%d%H%M%S %z", gmtime_e);
@@ -379,14 +379,14 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 
 					char mtime_s[256];
 					memset(mtime_s, '\0', 256);
-					struct tm *loctime_s = localtime ((time_t*)&title->start_time);
+					struct tm *loctime_s = localtime (&title->start_time);
 					strftime (mtime_s, sizeof(mtime_s), "%Y%m%d%H%M%S %z", loctime_s);
 
 					char mtime_e[256];
 					memset(mtime_e, '\0', 256);
-					uint32_t endt;
+					time_t endt;
 					endt = (title->start_time + title->length);
-					struct tm *loctime_e = localtime ((time_t*)&endt);
+					struct tm *loctime_e = localtime (&endt);
 					strftime (mtime_e, sizeof(mtime_e), "%Y%m%d%H%M%S %z", loctime_e);
 
 					FILE *outfile;
