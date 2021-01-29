@@ -14,7 +14,7 @@
 #include <malloc.h>
 #include <linux/dvb/dmx.h>
 
-#include "../common.h"
+#include "common.h"
 
 #include "core/log.h"
 #include "dvb/dvb.h"

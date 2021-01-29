@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include <time.h>
 
-#include "../../common.h"
+#include "../common.h"
 
 #include "log.h"
 

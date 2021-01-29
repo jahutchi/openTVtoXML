@@ -1,15 +1,15 @@
-OBJS += src/common/memory.o
-OBJS += src/common/core/log.o
-OBJS += src/common/core/dvb_text.o
-OBJS += src/common/dvb/dvb.o
-OBJS += src/common/opentv/opentv.o
-OBJS += src/common/opentv/huffman.o
-OBJS += src/common/providers/providers.o
-OBJS += src/common/epgdb/epgdb.o
-OBJS += src/common/epgdb/epgdb_channels.o
-OBJS += src/common/epgdb/epgdb_titles.o
+OBJS += src/memory.o
+OBJS += src/core/log.o
+OBJS += src/core/dvb_text.o
+OBJS += src/dvb/dvb.o
+OBJS += src/opentv/opentv.o
+OBJS += src/opentv/huffman.o
+OBJS += src/providers/providers.o
+OBJS += src/epgdb/epgdb.o
+OBJS += src/epgdb/epgdb_channels.o
+OBJS += src/epgdb/epgdb_titles.o
 
-DOWNLOADER_OBJS += src/common/OpenTVdecoder.o
+DOWNLOADER_OBJS += src/OpenTVdecoder.o
 
 DOWNLOADER_BIN = bin/OpenTVdecoder
 

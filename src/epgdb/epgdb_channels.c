@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 
-#include "../../common.h"
+#include "../common.h"
 
 #include "epgdb.h"
 #include "epgdb_channels.h"

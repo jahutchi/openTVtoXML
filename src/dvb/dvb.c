@@ -18,7 +18,7 @@
 #include <linux/dvb/dmx.h>
 #endif
 
-#include "../../common.h"
+#include "../common.h"
 
 #include "../core/log.h"
 

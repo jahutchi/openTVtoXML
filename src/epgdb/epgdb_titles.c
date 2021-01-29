@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "../../common.h"
+#include "../common.h"
 
 #include "epgdb.h"
 #include "epgdb_titles.h"

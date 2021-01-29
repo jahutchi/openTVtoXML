@@ -7,7 +7,7 @@
 #include <time.h>
 #include <sys/stat.h>
 
-#include "../../common.h"
+#include "../common.h"
 
 #include "epgdb.h"
 #include "epgdb_channels.h"

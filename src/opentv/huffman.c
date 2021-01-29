@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <malloc.h>
 
-#include "../../common.h"
+#include "../common.h"
 #include "../core/log.h"
 
 #include "huffman.h"

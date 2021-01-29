@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../common.h"
+#include "../common.h"
 #include "../core/log.h"
 #include "../providers/providers.h"
 
