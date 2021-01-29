@@ -36,9 +36,9 @@ bool huffman_debug_summaries = false;
 
 char *db_root = DEFAULT_DB_ROOT;
 char demuxer[256];
-//char provider[256];
 char homedir[256];
 int frontend = 0;
+FILE *channel_file, *programme_file;
 
 static volatile bool stop = false;
 static volatile bool exec = false;
@@ -171,14 +171,10 @@ void download_opentv ()
 		log_add ("1/6 - Reading services...");
 		dvb_read (&settings, *sdt_callback);
 
-		FILE *outfile;
 		char name_file[MAX_FILENAME_SIZE];
-		memset(name_file, '\0', MAX_FILENAME_SIZE);
 		sprintf(name_file, "%s/%s.channels.xml", db_root, provider);
-		outfile = fopen(name_file,"w");
-		fprintf(outfile,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<channels>\n");
-		fflush(outfile);
-		fclose(outfile);
+		channel_file = fopen(name_file,"w");
+		fprintf(channel_file,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<channels>\n");
 
 		print_meminfo ();
 		log_add ("1/6 - Read %d services", opentv_channels_name_count ());
@@ -189,20 +185,16 @@ void download_opentv ()
 		log_add ("2/6 - Reading channels...");
 		dvb_read (&settings, *bat_callback);
 
-		outfile = fopen(name_file,"a");
-		fprintf(outfile,"</channels>\n");
-		fflush(outfile);
-		fclose(outfile);
+		fprintf(channel_file,"</channels>\n");
 
 		memset(name_file, '\0', MAX_FILENAME_SIZE);
 		sprintf(name_file, "%s/%s.xml", db_root, provider);
-		outfile = fopen(name_file,"w");
-		fprintf(outfile,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
-		fprintf(outfile,"<tv generator-info-name=\"OpenTVdecoder\"");
-		fprintf(outfile," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\">\n");
-		fflush(outfile);
-		fclose(outfile);
+		programme_file = fopen(name_file,"w");
+		fprintf(programme_file,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+		fprintf(programme_file,"<tv generator-info-name=\"OpenTVdecoder\"");
+		fprintf(programme_file," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\">\n");
 
+		FILE *outfile;
 		memset(name_file, '\0', MAX_FILENAME_SIZE);
 		sprintf(name_file, "%s/otv_%s.sources.xml", db_root, provider);
 		outfile = fopen(name_file,"w");
@@ -314,12 +306,9 @@ opentv_stop:
 		epgdb_clean ();
 		opentv_cleanup();
 
-		memset(name_file, '\0', MAX_FILENAME_SIZE);
-		sprintf(name_file, "%s/%s.xml", db_root, provider);
-		outfile = fopen(name_file,"a");
-		fprintf(outfile,"</tv>\n");
-		fflush(outfile);
-		fclose(outfile);
+		fprintf(programme_file,"</tv>\n");
+		fclose(channel_file);
+		fclose(programme_file);
 	}
 
 	exec = false;
