@@ -187,7 +187,7 @@ bool opentv_read_channels_bat (unsigned char *data, unsigned int length, char *d
 					{
 						fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%s</display-name></channel>\n",
 							providers_get_orbital_position(), nid, channel_id,
-							channels_name[sid]);
+							xmlify(channels_name[sid], strlen(channels_name[sid])));
 
 						channels[channel_id] = epgdb_channels_add (nid, tid, sid, type_id);
 						ch_count++;
