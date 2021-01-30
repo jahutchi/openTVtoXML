@@ -1,6 +1,4 @@
-# TODO:
+## TODO:
 - Add code to tune to mux.
 
-- Allow selection of tuner frontend.
-
-- Make output format compatible with XMLTV.
+- Add more elements to XML output.
