@@ -152,7 +152,6 @@ bool opentv_read_channels_bat (unsigned char *data, unsigned int length, char *d
 
 	while (transport_stream_loop_length > 0)
 	{
-		unsigned int name_space = providers_get_orbital_position() << 16;
 		unsigned short int tid = (data[offset1] << 8) | data[offset1 + 1];
 		unsigned short int nid = (data[offset1 + 2] << 8) | data[offset1 + 3];
 		unsigned short int transport_descriptor_length = ((data[offset1 + 4] & 0x0f) << 8) | data[offset1 + 5];
@@ -186,14 +185,8 @@ bool opentv_read_channels_bat (unsigned char *data, unsigned int length, char *d
 
 					if (channels[channel_id] == NULL)
 					{
-						fprintf(channel_file,"<!-- %s --><channel id=\"%i_%i_%i\">1:0:%X:%X:%X:%X:%X:0:0:0:</channel><!-- \"%s\" -->\n",
-							provider,
+						fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%s</display-name></channel>\n",
 							providers_get_orbital_position(), nid, channel_id,
-							type_id,
-							sid,
-							tid,
-							nid,
-							name_space,
 							channels_name[sid]);
 
 						channels[channel_id] = epgdb_channels_add (nid, tid, sid, type_id);
@@ -380,11 +373,11 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 					struct tm *loctime_e = localtime (&endt);
 					strftime (mtime_e, sizeof(mtime_e), "%Y%m%d%H%M%S %z", loctime_e);
 
-					fprintf(programme_file, " <programme start=\"%s\" stop=\"%s\" channel=\"%s\">\n", mtime_s, mtime_e, channels_name[channels[channel_id]->sid]);
-					fprintf(programme_file, "  <title lang=\"%s\">%s</title>\n", providers_get_lang(), xmlify(title->program, strlen(title->program)));
-					fprintf(programme_file, "  <sub-title lang=\"%s\">%s</sub-title>\n", providers_get_lang(), xmlify(genre[title->genre_id], strlen(genre[title->genre_id])));
-					fprintf(programme_file, "  <desc lang=\"%s\">%s</desc>\n", providers_get_lang(), xmlify(tmp, strlen(tmp)));
-					fprintf(programme_file, " </programme>\n");
+					fprintf(outfile, " <programme start=\"%s\" stop=\"%s\" channel=\"%i_%i_%i\">\n", mtime_s, mtime_e, providers_get_orbital_position(), channels[channel_id]->nid, channel_id);
+					fprintf(outfile, "  <title lang=\"%s\">%s</title>\n", providers_get_lang(), xmlify(title->program, strlen(title->program)));
+					fprintf(outfile, "  <sub-title lang=\"%s\">%s</sub-title>\n", providers_get_lang(), xmlify(genre[title->genre_id], strlen(genre[title->genre_id])));
+					fprintf(outfile, "  <desc lang=\"%s\">%s</desc>\n", providers_get_lang(), xmlify(tmp, strlen(tmp)));
+					fprintf(outfile, " </programme>\n");
 
 					epgdb_titles_delete_event_id(channels[channel_id], title->event_id);
 				}

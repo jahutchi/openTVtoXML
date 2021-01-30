@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <malloc.h>
+#include <limits.h>
 #include <linux/dvb/dmx.h>
 
 #include "common.h"
@@ -38,7 +39,7 @@ char *db_root = DEFAULT_DB_ROOT;
 char demuxer[256];
 char homedir[256];
 int frontend = 0;
-FILE *channel_file, *programme_file;
+FILE *outfile;
 
 static volatile bool stop = false;
 static volatile bool exec = false;
@@ -144,14 +145,14 @@ void download_opentv ()
 {
 	int i;
 	dvb_t settings;
-	char dictionary[MAX_FILENAME_SIZE];
-	char themes[MAX_FILENAME_SIZE];
+	char dictionary[PATH_MAX];
+	char themes[PATH_MAX];
 
 	log_add ("Started OpenTV decoder");
 	log_add ("Started OpenTV events download, DVB poll %s\n", no_dvb_poll ? "disabled" : "enabled");
 
-	sprintf (dictionary, "%s/providers/%s.dict", homedir, provider);
-	sprintf (themes, "%s/providers/%s.themes", homedir, provider);
+	snprintf (dictionary, PATH_MAX, "%s/providers/%s.dict", homedir, provider);
+	snprintf (themes, PATH_MAX, "%s/providers/%s.themes", homedir, provider);
 
 	opentv_init ();
 	if (huffman_read_dictionary (dictionary) && opentv_read_themes (themes))
@@ -171,10 +172,13 @@ void download_opentv ()
 		log_add ("1/6 - Reading services...");
 		dvb_read (&settings, *sdt_callback);
 
-		char name_file[MAX_FILENAME_SIZE];
-		sprintf(name_file, "%s/%s.channels.xml", db_root, provider);
-		channel_file = fopen(name_file,"w");
-		fprintf(channel_file,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<channels>\n");
+		char name_file[PATH_MAX];
+		snprintf(name_file, PATH_MAX, "%s/%s.xml", db_root, provider);
+		outfile = fopen(name_file,"w");
+		fprintf(outfile,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+		fprintf(outfile, "<!DOCTYPE tv SYSTEM \"xmltv.dtd\">\n");
+		fprintf(outfile,"<tv generator-info-name=\"OpenTVdecoder\"");
+		fprintf(outfile," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\">\n");
 
 		print_meminfo ();
 		log_add ("1/6 - Read %d services", opentv_channels_name_count ());
@@ -184,29 +188,6 @@ void download_opentv ()
 
 		log_add ("2/6 - Reading channels...");
 		dvb_read (&settings, *bat_callback);
-
-		fprintf(channel_file,"</channels>\n");
-
-		memset(name_file, '\0', MAX_FILENAME_SIZE);
-		sprintf(name_file, "%s/%s.xml", db_root, provider);
-		programme_file = fopen(name_file,"w");
-		fprintf(programme_file,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
-		fprintf(programme_file,"<tv generator-info-name=\"OpenTVdecoder\"");
-		fprintf(programme_file," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\">\n");
-
-		FILE *outfile;
-		memset(name_file, '\0', MAX_FILENAME_SIZE);
-		sprintf(name_file, "%s/otv_%s.sources.xml", db_root, provider);
-		outfile = fopen(name_file,"w");
-		fprintf(outfile,"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<sources>\n");
-		fprintf(outfile," <!-- \n xmltv generator\"OpenTVdecoder\"\n");
-		fprintf(outfile," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\"\n --> \n");
-		fprintf(outfile,"\t<mappings>\n\t\t<channel name=\"%s.channels.xml\">\n\t\t\t<url>%s/%s.channels.xml</url>\n", provider, db_root, provider);
-		fprintf(outfile,"\t\t</channel>\n\t</mappings>\n\t<sourcecat sourcecatname=\"RadioTimes Emulator %s XMLTV\">\n", provider);
-		fprintf(outfile,"\t\t<source type=\"gen_xmltv\" channels=\"%s.channels.xml\">\n\t\t\t<description>OpenTV (%s.xml)</description>\n", provider, provider);
-		fprintf(outfile,"\t\t\t<url>%s/%s.xml</url>\n\t\t</source>\n\t</sourcecat>\n</sources>\n", db_root, provider);
-		fflush(outfile);
-		fclose(outfile);
 
 		print_meminfo ();
 		log_add ("2/6 - Read %d channels", opentv_channels_count ());
@@ -306,9 +287,8 @@ opentv_stop:
 		epgdb_clean ();
 		opentv_cleanup();
 
-		fprintf(programme_file,"</tv>\n");
-		fclose(channel_file);
-		fclose(programme_file);
+		fprintf(outfile,"</tv>\n");
+		fclose(outfile);
 	}
 
 	exec = false;
@@ -317,10 +297,9 @@ opentv_stop:
 
 void *download (void *args)
 {
-	char opentv_file[MAX_FILENAME_SIZE];
-	memset(opentv_file, '\0', MAX_FILENAME_SIZE);
+	char opentv_file[PATH_MAX];
 
-	sprintf (opentv_file, "%s/providers/%s.conf", homedir, provider);
+	snprintf (opentv_file, PATH_MAX, "%s/providers/%s.conf", homedir, provider);
 
 	if (providers_read (opentv_file))
 	{
@@ -425,10 +404,9 @@ int main (int argc, char **argv)
 	log_open (db_root);
 	log_banner ("OpenTVdecoder");
 
-	char opentv_file[MAX_FILENAME_SIZE];
-	memset(opentv_file, '\0', MAX_FILENAME_SIZE);
+	char opentv_file[PATH_MAX];
 
-	sprintf (opentv_file, "%s/providers/%s.conf", homedir, provider);
+	snprintf (opentv_file, PATH_MAX, "%s/providers/%s.conf", homedir, provider);
 	if (providers_read (opentv_file))
 	{
 		log_add ("Provider %s opentv configured", provider);

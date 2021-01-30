@@ -15,7 +15,7 @@ DOWNLOADER_BIN = bin/OpenTVdecoder
 
 BIN_DIR = bin
 
-#CFLAGS += -g -Wall -Werror
+CFLAGS += -Wall -Werror
 
 all: clean $(DOWNLOADER_BIN)
 

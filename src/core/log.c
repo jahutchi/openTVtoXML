@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <time.h>
+#include <limits.h>
 
 #include "../common.h"
 
@@ -20,8 +21,8 @@ void log_disable ()
 }
 bool log_new (char *db_root)
 {
-	char log_filename[MAX_FILENAME_SIZE];
-	sprintf (log_filename, "%s/%s.log", db_root, provider);
+	char log_filename[PATH_MAX];
+	snprintf (log_filename, PATH_MAX, "%s/%s.log", db_root, provider);
 
 	fd = fopen (log_filename, "w");
 	if (fd != NULL)
@@ -32,8 +33,8 @@ bool log_new (char *db_root)
 
 bool log_open (char *db_root)
 {	
-	char log_filename[MAX_FILENAME_SIZE];
-	sprintf (log_filename, "%s/%s.log", db_root, provider);
+	char log_filename[PATH_MAX];
+	snprintf (log_filename, PATH_MAX, "%s/%s.log", db_root, provider);
 
 	fd = fopen (log_filename, "a");
 	
