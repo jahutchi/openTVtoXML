@@ -159,6 +159,9 @@ void download_opentv ()
 	{
 		char size[256];
 
+		log_add("0/6 - Tuning to mux...");
+		if (dvb_tune() != 0) return;
+
 		settings.demuxer = demuxer;
 		settings.frontend = frontend;
 		settings.buffer_size = 4 * 1024;

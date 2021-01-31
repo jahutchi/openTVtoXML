@@ -21,5 +21,6 @@ typedef struct dvb_s
 } dvb_t;
 
 void dvb_read (dvb_t *settings, bool(*data_callback)(int, unsigned char*));
+int dvb_tune ();
 
 #endif // _DVB_H_

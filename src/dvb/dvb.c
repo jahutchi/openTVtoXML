@@ -10,19 +10,51 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-#ifdef OLDDVBAPI
-#include <ost/dmx.h>
-#define dmx_pes_filter_params dmxPesFilterParams
-#define dmx_sct_filter_params dmxSctFilterParams
-#else
 #include <linux/dvb/dmx.h>
-#endif
+#include <linux/dvb/frontend.h>
 
 #include "../common.h"
 
 #include "../core/log.h"
 
 #include "dvb.h"
+
+int dvb_tune (void)
+{
+	struct dtv_property props[] = {
+		{ .cmd = DTV_DELIVERY_SYSTEM, .u.data = SYS_DVBS },
+		{ .cmd = DTV_FREQUENCY,       .u.data = 11778000 },
+		{ .cmd = DTV_MODULATION,      .u.data = QPSK },
+		{ .cmd = DTV_INVERSION,       .u.data = INVERSION_AUTO },
+		{ .cmd = DTV_SYMBOL_RATE,     .u.data = 27500000 },
+		{ .cmd = DTV_INNER_FEC,       .u.data = FEC_2_3 },
+		{ .cmd = DTV_TUNE }
+	};
+
+	struct dtv_properties dtv_prop = {
+		.num = 7, .props = props
+	};
+
+	int fd = open("/dev/dvb/adapter0/frontend0", O_RDWR);
+
+	if (fd <= 0) {
+		perror ("open");
+		return -1;
+	}
+	if (ioctl(fd, FE_SET_PROPERTY, &dtv_prop) == -1) {
+		perror("ioctl");
+		return -1;
+	}
+	sleep(5);
+	log_add("Frontend set");
+	int status;
+	if (ioctl(fd, FE_READ_STATUS, &status)) {
+		perror("ioctl-status");
+		return -1;
+	}
+	log_add("FE status %X", status);
+	return 0;
+}
 
 void dvb_read (dvb_t *settings, bool(*data_callback)(int, unsigned char*))
 {

@@ -13,6 +13,8 @@ int  providers_get_nid ();
 int  providers_get_tsid ();
 int  providers_get_sid ();
 int  providers_get_orbital_position ();
+int  providers_get_frequency ();
+int  providers_get_symbol_rate ();
 bool providers_read (char *read);
 char  *providers_get_lang ();
 
