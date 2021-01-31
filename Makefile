@@ -9,9 +9,9 @@ OBJS += src/epgdb/epgdb.o
 OBJS += src/epgdb/epgdb_channels.o
 OBJS += src/epgdb/epgdb_titles.o
 
-DOWNLOADER_OBJS += src/OpenTVdecoder.o
+DOWNLOADER_OBJS += src/openTVtoXML.o
 
-DOWNLOADER_BIN = bin/OpenTVdecoder
+DOWNLOADER_BIN = bin/openTVtoXML
 
 BIN_DIR = bin
 
@@ -30,21 +30,12 @@ $(DOWNLOADER_OBJS):
 
 $(DOWNLOADER_BIN): $(OBJS) $(DOWNLOADER_OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(DOWNLOADER_OBJS)
-	$(STRIP) $@
 
 clean:
 	rm -f $(OBJS) $(DOWNLOADER_OBJS) $(DOWNLOADER_BIN)
 
-install-standalone:
-	install -d $(D)/opt/OpenTVdecoder/providers
-	install -m 755 bin/OpenTVdecoder $(D)/opt/OpenTVdecoder/
-	install -m 644 providers/* $(D)/opt/OpenTVdecoder/providers/
-
-install-standalone-var:
-	install -d $(D)/var/OpenTVdecoder/providers
-	install -m 755 bin/OpenTVdecoder $(D)/var/OpenTVdecoder/
-	install -m 644 providers/* $(D)/var/OpenTVdecoder/providers/
-
-install: install-standalone
-install-var: install-standalone-var
+install:
+	install -d $(D)/opt/openTVtoXML/providers
+	install -m 755 bin/openTVtoXML $(D)/opt/openTVtoXML/
+	install -m 644 providers/* $(D)/opt/openTVtoXML/providers/
 
