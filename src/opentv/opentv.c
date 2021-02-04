@@ -24,6 +24,7 @@
 char *genre[256];
 char provider[256];
 bool no_dvb_poll;
+bool free_only;
 bool carousel_dvb_poll;
 
 static epgdb_channel_t *channels[MAX_CHANNELS];
@@ -88,7 +89,7 @@ void opentv_read_channels_sdt (unsigned char *data, unsigned int length)
 	while (length >= 5)
 	{
 		unsigned short service_id = (data[offset] << 8) | data[offset + 1];
-		//unsigned short free_ca = (data[offset + 3] >> 4) & 0x01;
+		unsigned short free_ca = (data[offset + 3] >> 4) & 0x01;
 		int descriptors_loop_length = ((data[offset + 3] & 0x0f) << 8) | data[offset + 4];
 		char service_name[256];
 
@@ -135,7 +136,7 @@ void opentv_read_channels_sdt (unsigned char *data, unsigned int length)
 			offset2 += (descriptor_length + 2);
 		}
 
-		if (channels_name[service_id][0] == '\0')
+		if (channels_name[service_id][0] == '\0' && !(free_only && free_ca))
 		{
 			ch_name_count++;
 			memcpy(channels_name[service_id], service_name, sizeof(service_name));
@@ -183,7 +184,7 @@ bool opentv_read_channels_bat (unsigned char *data, unsigned int length, char *d
 					type_id = data[offset3 + 2];
 					channel_id = (data[offset3 + 3] << 8) | data[offset3 + 4];
 
-					if (channels[channel_id] == NULL)
+					if (channels[channel_id] == NULL && channels_name[sid][0] != 0)
 					{
 						fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%s</display-name></channel>\n",
 							providers_get_orbital_position(), nid, channel_id,

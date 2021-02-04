@@ -329,7 +329,7 @@ int main (int argc, char **argv)
 	strcpy (demuxer, DEFAULT_DEMUXER);
 	strcpy (provider, DEFAULT_OTV_PROVIDER);
 
-	while ((c = getopt (argc, argv, "h:d:x:f:l:p:k:cnryz")) != -1)
+	while ((c = getopt (argc, argv, "h:d:x:l:p:k:cfnryz")) != -1)
 	{
 		switch (c)
 		{
@@ -352,6 +352,9 @@ int main (int argc, char **argv)
 			case 'c':
 				carousel_dvb_poll = true;
 				break;
+			case 'f':
+				free_only = true;
+				break;
 			case 'n':
 				no_dvb_poll = true;
 				break;
@@ -366,23 +369,24 @@ int main (int argc, char **argv)
 				break;
 			case '?':
 				printf ("Usage:\n");
-				printf ("  ./radiotimes_emulator [options]\n");
+				printf ("  ./openTVtoXML [options]\n");
 				printf ("Options:\n");
-				printf ("  -d db_root    output folder\n");
-				printf ("                default: %s\n", db_root);
-				printf ("  -x demuxer    dvb demuxer\n");
-				printf ("                default: %s\n", demuxer);
-				printf ("  -l homedir    home directory\n");
-				printf ("                default: %s\n", homedir);
-				printf ("  -p provider   opentv provider\n");
-				printf ("                default: %s\n", provider);
-				printf ("  -k nice       see \"man nice\"\n");
-				printf ("  -c            carousel dvb polling\n");
-				printf ("  -n            no dvb polling\"\n");
-				printf ("  -r            show progress\n");
-				printf ("  -y            debug mode for huffman dictionary (summaries)\n");
-				printf ("  -z            debug mode for huffman dictionary (titles)\n");
-				printf ("  -h            show this help\n");
+				printf ("  -d db_root	output folder\n");
+				printf ("		default: %s\n", db_root);
+				printf ("  -x demuxer	dvb demuxer\n");
+				printf ("		default: %s\n", demuxer);
+				printf ("  -l homedir	home directory\n");
+				printf ("		default: %s\n", homedir);
+				printf ("  -p provider	opentv provider\n");
+				printf ("		default: %s\n", provider);
+				printf ("  -k nice	see \"man nice\"\n");
+				printf ("  -c		carousel dvb polling\n");
+				printf ("  -f		Un-encrypted channels only\n");
+				printf ("  -n		no dvb polling\"\n");
+				printf ("  -r		show progress\n");
+				printf ("  -y		debug mode for huffman dictionary (summaries)\n");
+				printf ("  -z		debug mode for huffman dictionary (titles)\n");
+				printf ("  -h		show this help\n");
 				return 0;
 		}
 	}

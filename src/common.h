@@ -15,6 +15,7 @@ typedef enum type_bool {false = 0, true} bool;
 extern char provider[256];
 extern bool no_dvb_poll;
 extern bool carousel_dvb_poll;
+extern bool free_only;
 extern FILE *outfile;
 
 //#define MEMORYMON true
