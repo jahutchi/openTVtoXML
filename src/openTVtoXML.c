@@ -38,7 +38,6 @@ bool huffman_debug_summaries = false;
 char *db_root = DEFAULT_DB_ROOT;
 char demuxer[256];
 char homedir[256];
-int frontend = 0;
 FILE *outfile;
 
 static volatile bool stop = false;
@@ -160,7 +159,6 @@ void download_opentv ()
 		char size[256];
 
 		settings.demuxer = demuxer;
-		settings.frontend = frontend;
 		settings.buffer_size = 4 * 1024;
 		settings.min_length = 11;
 		settings.filter = 0x40;
@@ -341,9 +339,6 @@ int main (int argc, char **argv)
 			case 'x':
 				strcpy (demuxer, optarg);
 				break;
-			case 'f':
-				frontend = atoi(optarg);
-				break;
 			case 'l':
 				strcpy (homedir, optarg);
 				break;
@@ -361,7 +356,6 @@ int main (int argc, char **argv)
 				no_dvb_poll = true;
 				break;
 			case 'r':
-				//log_disable ();
 				iactive = true;
 				break;
 			case 'y':
@@ -374,12 +368,10 @@ int main (int argc, char **argv)
 				printf ("Usage:\n");
 				printf ("  ./radiotimes_emulator [options]\n");
 				printf ("Options:\n");
-				printf ("  -d db_root    radiotimes db root folder\n");
+				printf ("  -d db_root    output folder\n");
 				printf ("                default: %s\n", db_root);
 				printf ("  -x demuxer    dvb demuxer\n");
 				printf ("                default: %s\n", demuxer);
-				printf ("  -f frontend   dvb frontend\n");
-				printf ("                default: %d\n", frontend);
 				printf ("  -l homedir    home directory\n");
 				printf ("                default: %s\n", homedir);
 				printf ("  -p provider   opentv provider\n");
