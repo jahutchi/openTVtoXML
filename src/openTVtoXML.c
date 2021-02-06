@@ -329,7 +329,7 @@ int main (int argc, char **argv)
 	strcpy (demuxer, DEFAULT_DEMUXER);
 	strcpy (provider, DEFAULT_OTV_PROVIDER);
 
-	while ((c = getopt (argc, argv, "h:d:x:l:p:k:cfnryz")) != -1)
+	while ((c = getopt (argc, argv, "h:d:x:l:p:k:cfnrsyz")) != -1)
 	{
 		switch (c)
 		{
@@ -361,6 +361,9 @@ int main (int argc, char **argv)
 			case 'r':
 				iactive = true;
 				break;
+			case 's':
+				show_lcns = true;
+				break;
 			case 'y':
 				huffman_debug_summaries = true;
 				break;
@@ -382,8 +385,9 @@ int main (int argc, char **argv)
 				printf ("  -k nice	see \"man nice\"\n");
 				printf ("  -c		carousel dvb polling\n");
 				printf ("  -f		Un-encrypted channels only\n");
-				printf ("  -n		no dvb polling\"\n");
+				printf ("  -n		no dvb polling\n");
 				printf ("  -r		show progress\n");
+				printf ("  -s		show Sky channel numbers\n");
 				printf ("  -y		debug mode for huffman dictionary (summaries)\n");
 				printf ("  -z		debug mode for huffman dictionary (titles)\n");
 				printf ("  -h		show this help\n");

@@ -16,6 +16,7 @@ extern char provider[256];
 extern bool no_dvb_poll;
 extern bool carousel_dvb_poll;
 extern bool free_only;
+extern bool show_lcns;
 extern FILE *outfile;
 
 //#define MEMORYMON true

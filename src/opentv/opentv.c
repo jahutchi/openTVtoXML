@@ -25,6 +25,7 @@ char *genre[256];
 char provider[256];
 bool no_dvb_poll;
 bool free_only;
+bool show_lcns;
 bool carousel_dvb_poll;
 
 static epgdb_channel_t *channels[MAX_CHANNELS];
@@ -179,16 +180,27 @@ bool opentv_read_channels_bat (unsigned char *data, unsigned int length, char *d
 					unsigned short int type_id;
 					unsigned short int channel_id;
 					unsigned short int sid;
+					unsigned short int lcn;
 
 					sid = (data[offset3] << 8) | data[offset3 + 1];
 					type_id = data[offset3 + 2];
 					channel_id = (data[offset3 + 3] << 8) | data[offset3 + 4];
+					lcn = (data[offset3 + 5] << 8) | data[offset3 + 6];
+					if (lcn > 3100 && lcn < 3250) lcn -= 3000;	//radio channels
 
 					if (channels[channel_id] == NULL && channels_name[sid][0] != 0)
 					{
-						fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%s</display-name></channel>\n",
-							providers_get_orbital_position(), nid, channel_id,
-							xmlify(channels_name[sid], strlen(channels_name[sid])));
+						if (show_lcns && lcn != 0xffff) {
+							fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%d %s</display-name></channel>\n",
+								providers_get_orbital_position(), nid, channel_id,
+								lcn,
+								xmlify(channels_name[sid], strlen(channels_name[sid])));
+						}
+						else {
+							fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%s</display-name></channel>\n",
+								providers_get_orbital_position(), nid, channel_id,
+								xmlify(channels_name[sid], strlen(channels_name[sid])));
+						}
 
 						channels[channel_id] = epgdb_channels_add (nid, tid, sid, type_id);
 						ch_count++;
@@ -249,7 +261,6 @@ void opentv_read_titles (unsigned char *data, unsigned int length, bool huffman_
 				title->mjd = mjd_time;
 				title->length = ((data[offset + 4] << 9) | (data[offset + 5] << 1));
 				title->genre_id = data[offset + 6];
-				
 				if (!huffman_decode (data + offset + 9, description_length, tmp, MAX_TITLE_SIZE * 2, huffman_debug))
 					tmp[0] = '\0';
 				else
