@@ -28,6 +28,8 @@ bool free_only;
 bool show_lcns;
 bool carousel_dvb_poll;
 
+char *ratings[] = {"U", "PG", "12", "15", "18", " "};	//TODO - internationalise
+
 static epgdb_channel_t *channels[MAX_CHANNELS];
 char channels_name[MAX_CHANNELS][256];
 
@@ -261,6 +263,8 @@ void opentv_read_titles (unsigned char *data, unsigned int length, bool huffman_
 				title->mjd = mjd_time;
 				title->length = ((data[offset + 4] << 9) | (data[offset + 5] << 1));
 				title->genre_id = data[offset + 6];
+				title->rating = data[offset + 8] & 0x0f;
+				if (title->rating > 5) title->rating = 5;
 				if (!huffman_decode (data + offset + 9, description_length, tmp, MAX_TITLE_SIZE * 2, huffman_debug))
 					tmp[0] = '\0';
 				else
@@ -389,6 +393,7 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 					fprintf(outfile, "  <title lang=\"%s\">%s</title>\n", providers_get_lang(), xmlify(title->program, strlen(title->program)));
 					fprintf(outfile, "  <category lang=\"%s\">%s</category>\n", providers_get_lang(), xmlify(genre[title->genre_id], strlen(genre[title->genre_id])));
 					fprintf(outfile, "  <desc lang=\"%s\">%s</desc>\n", providers_get_lang(), xmlify(tmp, strlen(tmp)));
+					fprintf(outfile, "  <rating system=\"BFRB\"><value>%s</value></rating>\n", ratings[title->rating]);
 					fprintf(outfile, " </programme>\n");
 
 					epgdb_titles_delete_event_id(channels[channel_id], title->event_id);
