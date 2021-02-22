@@ -20,6 +20,13 @@ Options:
   -z            debug mode for huffman dictionary (titles)
   -h            show this help
 ```
+First, tune the DVB-S tuner to the Sky EPG mux (11778V for the UK). This can be done using the Tvheadend 'Mux Schedulers' screen. It is not necessary for Tvheadend to be using the mux as long as no other process (eg a timer) tunes away.
+
+Run openTVtoXML:
+```
+cd /opt/openTVtoXML
+./openTVtoXML -f -s
+```
 Once the output file has been created it is necessary to feed the data into the Tvheadend EPG grabber, using a command such as:
 ```
 cat /tmp/xmltv/skyuk_28.2.xml | nc -w5 -U /home/hts/.hts/tvheadend/epggrab/xmltv.sock
