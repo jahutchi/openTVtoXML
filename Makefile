@@ -1,5 +1,6 @@
 OBJS += src/memory.o
 OBJS += src/core/log.o
+OBJS += src/core/regexp_utils.o
 OBJS += src/core/dvb_text.o
 OBJS += src/dvb/dvb.o
 OBJS += src/opentv/opentv.o

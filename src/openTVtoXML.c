@@ -277,6 +277,7 @@ void download_opentv ()
 			format_size (size, buffer_size);
 			print_meminfo ();
 			log_add ("6/6 - Summaries parsed %s", size);
+			opentv_print_episode_summary();
 
 			if (!no_dvb_poll) break;
 		}

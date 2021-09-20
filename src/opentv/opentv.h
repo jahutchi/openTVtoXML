@@ -19,5 +19,6 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 epgdb_channel_t *opentv_get_channel (unsigned short int id);
 void removeSubstring(char *s,const char *toremove);
 char *replace_Substring(char *str, char *orig, char *rep, int start);
+void opentv_print_episode_summary ();
 
 #endif // _OPENTV_H_

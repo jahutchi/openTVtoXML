@@ -1,13 +1,15 @@
-#include <stdio.h>
-#include <time.h>
+#include <ctype.h>
 #include <memory.h>
 #include <malloc.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "../common.h"
 #include "../core/log.h"
+#include "../core/regexp_utils.h"
 #include "../providers/providers.h"
 
 #include "huffman.h"
@@ -27,6 +29,9 @@ bool no_dvb_poll;
 bool free_only;
 bool show_lcns;
 bool carousel_dvb_poll;
+
+int epinfo_found_count = 0;
+int epinfo_notfound_count = 0;
 
 char *ratings[] = {"U", "PG", "12", "15", "18", " "};	//TODO - internationalise
 
@@ -295,7 +300,11 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 
 	unsigned short int channel_id = (data[3] << 8) | data[4];
 	unsigned short int mjd_time = (data[8] << 8) | data[9];
-	
+	int snum;
+	int epnum;
+	char epinfo[16];
+	char regex_buffer[10];
+
 	if ((channel_id > 0) && (mjd_time > 0))
 	{
 		unsigned int offset = 10;
@@ -353,7 +362,34 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 						printf ("Nid: %x Tsid: %x Sid: %x Type: %x\n", channels[channel_id]->nid, channels[channel_id]->tsid, channels[channel_id]->sid, channels[channel_id]->type);
 						strftime (mtime, 20, "%d/%m/%Y %H:%M", loctime);
 						printf ("Start time: %s\n", mtime);
-						
+					}
+
+					// Extract Season
+					snum = 0;
+					if (regex_pattern_apply(regex_buffer, sizeof(regex_buffer), tmp, " *\\(S ?([0-9]+),? [Ee]p? ?[0-9]+\\)"))
+						snum = atoi(regex_buffer);
+					else if (regex_pattern_apply(regex_buffer, sizeof(regex_buffer), tmp, " S ?([0-9]+),? [Ee]p? ?[0-9]+"))
+						snum = atoi(regex_buffer);
+
+					// Extract Episode Number
+					epnum = 0;
+					if (regex_pattern_apply(regex_buffer, sizeof(regex_buffer), tmp, " *\\(S ?[0-9]+,? [Ee]p? ?([0-9]+)\\)"))
+						epnum = atoi(regex_buffer);
+					else if (regex_pattern_apply(regex_buffer, sizeof(regex_buffer), tmp, " S ?[0-9]+,? [Ee]p? ?([0-9]+)"))
+						epnum = atoi(regex_buffer);
+					else if (regex_pattern_apply(regex_buffer, sizeof(regex_buffer), tmp, " *\\([Ee]p ?([0-9]+)\\)"))
+						epnum = atoi(regex_buffer);
+					else if (regex_pattern_apply(regex_buffer, sizeof(regex_buffer), tmp, " *\\([Ee]p ?([0-9]+)/[0-9]+\\)"))
+						epnum = atoi(regex_buffer);
+					else if (regex_pattern_apply(regex_buffer, sizeof(regex_buffer), tmp, "^([0-9]+)/[0-9]+\\. "))
+						epnum = atoi(regex_buffer);
+
+					memset(epinfo, '\0', sizeof(epinfo));
+					if (snum == 0 && epnum == 0) {
+						epinfo_notfound_count++;
+					} else {
+						epinfo_found_count++;
+						sprintf(epinfo, "%d . %d . ", (snum-1), (epnum-1));
 					}
 /*
 					// Keep current timestamp, we write the localtime() +0000/+0100 offset %z
@@ -393,6 +429,7 @@ void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffm
 					fprintf(outfile, "  <title lang=\"%s\">%s</title>\n", providers_get_lang(), xmlify(title->program, strlen(title->program)));
 					fprintf(outfile, "  <category lang=\"%s\">%s</category>\n", providers_get_lang(), xmlify(genre[title->genre_id], strlen(genre[title->genre_id])));
 					fprintf(outfile, "  <desc lang=\"%s\">%s</desc>\n", providers_get_lang(), xmlify(tmp, strlen(tmp)));
+					if (epinfo[0] != '\0') { fprintf(outfile, "  <episode-num system=\"xmltv_ns\">%s</episode-num>\n", epinfo); }
 					fprintf(outfile, "  <rating system=\"BFRB\"><value>%s</value></rating>\n", ratings[title->rating]);
 					fprintf(outfile, " </programme>\n");
 
@@ -443,6 +480,12 @@ bool opentv_read_themes (char *file)
 	log_add ("Completed. Read %d values", genre_id);
 
 	return true;
+}
+
+void opentv_print_episode_summary ()
+{
+	log_add ("   events with season/episode info %d", epinfo_found_count);
+	log_add ("   events missing season/episode info %d", epinfo_notfound_count);
 }
 
 epgdb_channel_t *opentv_get_channel (unsigned short int id)
