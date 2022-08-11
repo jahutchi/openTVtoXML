@@ -42,26 +42,6 @@ void removeSubstring(char *s,const char *toremove)
     memmove(s,s+strlen(toremove),1+strlen(s+strlen(toremove)));
 }
 
-char *replace_Substring(char *str, char *orig, char *rep, int start)
-{
-	static char temp[4096];
-	static char buffer[4096];
-	char *p;
-
-	strcpy(temp, str + start);
-
-	if(!(p = strstr(temp, orig)))
-		return temp;
-
-	strncpy(buffer, temp, p-temp);
-	buffer[p-temp] = '\0';
-
-	sprintf(buffer + (p - temp), "%s%s", rep, p + strlen(orig));
-	sprintf(str + start, "%s", buffer);
-
-	return str;
-}
-
 void opentv_init ()
 {
 	int i;
@@ -443,9 +423,4 @@ bool opentv_read_themes (char *file)
 	log_add ("Completed. Read %d values", genre_id);
 
 	return true;
-}
-
-epgdb_channel_t *opentv_get_channel (unsigned short int id)
-{
-	return channels[id];
 }

@@ -16,8 +16,6 @@ bool opentv_read_themes (char *file);
 void opentv_free_themes ();
 void opentv_read_titles (unsigned char *data, unsigned int length, bool huffman_debug);
 void opentv_read_summaries (unsigned char *data, unsigned int length, bool huffman_debug, char *db_root);
-epgdb_channel_t *opentv_get_channel (unsigned short int id);
 void removeSubstring(char *s,const char *toremove);
-char *replace_Substring(char *str, char *orig, char *rep, int start);
 
 #endif // _OPENTV_H_

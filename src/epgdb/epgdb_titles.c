@@ -13,35 +13,9 @@
 #include "epgdb.h"
 #include "epgdb_titles.h"
 
-epgdb_title_t *epgdb_title_alloc ()
-{
-	epgdb_title_t *ret = _malloc (sizeof (epgdb_title_t));
-	ret->genre_id = 0;
-	return ret;
-}
-
-void epgdb_title_free (epgdb_title_t *title)
-{
-	_free (title);
-}
-
 int epgdb_calculate_mjd (time_t value)
 {
 	return 40587 + ((value) / 86400.0);
-}
-
-int epgdb_titles_count (epgdb_channel_t *channel)
-{
-	int count = 0;
-	epgdb_title_t *tmp = channel->title_first;
-	
-	while (tmp != NULL)
-	{
-		count++;
-		tmp = tmp->next;
-	}
-	
-	return count;
 }
 
 epgdb_title_t *epgdb_titles_get_by_id_and_mjd (epgdb_channel_t *channel, unsigned short int event_id, unsigned short int mjd_time)
