@@ -147,7 +147,7 @@ void download_opentv ()
 	char dictionary[PATH_MAX];
 	char themes[PATH_MAX];
 
-	log_add ("Started OpenTV decoder");
+	log_add ("Started openTVtoXML");
 	log_add ("Started OpenTV events download, DVB poll %s\n", no_dvb_poll ? "disabled" : "enabled");
 
 	snprintf (dictionary, PATH_MAX, "%s/providers/%s.dict", homedir, provider);
@@ -175,8 +175,8 @@ void download_opentv ()
 		outfile = fopen(name_file,"w");
 		fprintf(outfile,"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
 		fprintf(outfile, "<!DOCTYPE tv SYSTEM \"xmltv.dtd\">\n");
-		fprintf(outfile,"<tv generator-info-name=\"OpenTVdecoder\"");
-		fprintf(outfile," generator-info-url=\"https://github.com/dave-p/OpenTVdecoder\">\n");
+		fprintf(outfile,"<tv generator-info-name=\"openTVtoXML\"");
+		fprintf(outfile," generator-info-url=\"https://github.com/dave-p/openTVtoXML\">\n");
 
 		print_meminfo ();
 		log_add ("1/6 - Read %d services", opentv_channels_name_count ());
@@ -290,7 +290,7 @@ opentv_stop:
 	}
 
 	exec = false;
-	log_add ("Ended OpenTV decoder");
+	log_add ("Ended openTVtoXML");
 }
 
 void *download (void *args)
@@ -402,7 +402,7 @@ int main (int argc, char **argv)
 
 	log_new (db_root);
 	log_open (db_root);
-	log_banner ("OpenTVdecoder");
+	log_banner ("openTVtoXML");
 
 	char opentv_file[PATH_MAX];
 

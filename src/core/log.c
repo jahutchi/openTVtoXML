@@ -43,7 +43,7 @@ bool log_open (char *db_root)
 
 void log_banner (char *app_name)
 {
-	log_add ("\n\nOpenTVdecoder\n");
+	log_add ("\n\nOpenTVtoXML\n");
 	log_add ("\nBased on RadiotimesXmltv Emulator\nSources https://github.com/LraiZer/RadiotimesXmltvEmulator\n");
 	log_add ("\nBased on SIFTeam Crossepg (c) 2009-2014 Sandro Cavazzoni\nSources https://github.com/oe-alliance/e2openplugin-CrossEPG\n");
 	log_add ("\nSource credits: crossepg, tv_grab_dvb\n");
