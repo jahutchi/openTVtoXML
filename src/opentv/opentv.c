@@ -168,15 +168,23 @@ bool opentv_read_channels_bat (unsigned char *data, unsigned int length, char *d
 					type_id = data[offset3 + 2];
 					channel_id = (data[offset3 + 3] << 8) | data[offset3 + 4];
 					lcn = (data[offset3 + 5] << 8) | data[offset3 + 6];
-					if (lcn > 3100 && lcn < 3250) lcn -= 3000;	//radio channels
 
 					if (channels[channel_id] == NULL && channels_name[sid][0] != 0)
 					{
 						if (show_lcns && lcn != 0xffff) {
-							fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%d %s</display-name></channel>\n",
-								providers_get_orbital_position(), nid, channel_id,
-								lcn,
-								xmlify(channels_name[sid], strlen(channels_name[sid])));
+							if (lcn > 3100 && lcn < 3250) {	//radio channels
+								lcn -= 3000;
+								fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>0%d %s</display-name></channel>\n",
+									providers_get_orbital_position(), nid, channel_id,
+									lcn,
+									xmlify(channels_name[sid], strlen(channels_name[sid])));
+							}
+							else {
+								fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%d %s</display-name></channel>\n",
+									providers_get_orbital_position(), nid, channel_id,
+									lcn,
+									xmlify(channels_name[sid], strlen(channels_name[sid])));
+							}
 						}
 						else {
 							fprintf(outfile,"<channel id=\"%i_%i_%i\"><display-name>%s</display-name></channel>\n",
